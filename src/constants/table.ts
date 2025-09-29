@@ -1,4 +1,4 @@
-export const TABLE_NAME = "user_message_entity"
+export const TABLE_NAME = "user_messages"
 
 export interface Table {
   message_id: string
