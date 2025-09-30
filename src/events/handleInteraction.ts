@@ -152,20 +152,17 @@ const handleRemoval = async (
 }
 
 const getBaseQuery = (context: BaseContext, options: SelectOptions) => {
-  const qb = context.db<Table>(TABLE_NAME).where(options.userId)
+  const qb = context.db<Table>(TABLE_NAME).where("user_id", options.userId)
 
   if (options.channelId) {
-    console.log("where channel_id", options.channelId)
     qb.where("channel_id", options.channelId)
   }
 
   if (options.ignoreChannelId) {
-    console.log("whereNot channel_id", options.ignoreChannelId)
     qb.whereNot("channel_id", options.ignoreChannelId)
   }
 
   if (options.beforeDate) {
-    console.log("where created_at", "<=", options.beforeDate)
     qb.where("created_at", "<=", options.beforeDate)
   }
 
