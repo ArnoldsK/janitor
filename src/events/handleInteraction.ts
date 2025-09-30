@@ -108,15 +108,13 @@ const handleRemoval = async (
     fetchReply: true,
   })
 
-  const getBatch = () => getBaseQuery(context, options).limit(BATCH_SIZE)
-
   let totalTime = 0
   let batchCount = 0
 
   while (true) {
     const start = Date.now()
 
-    const entries = await getBatch()
+    const entries = await getBaseQuery(context, options).limit(BATCH_SIZE)
     if (entries.length === 0) break
 
     for (let i = 0; i < entries.length; i += CONCURRENCY) {
@@ -157,14 +155,17 @@ const getBaseQuery = (context: BaseContext, options: SelectOptions) => {
   const qb = context.db<Table>(TABLE_NAME).where(options.userId)
 
   if (options.channelId) {
+    console.log("where channel_id", options.channelId)
     qb.where("channel_id", options.channelId)
   }
 
   if (options.ignoreChannelId) {
+    console.log("whereNot channel_id", options.ignoreChannelId)
     qb.whereNot("channel_id", options.ignoreChannelId)
   }
 
   if (options.beforeDate) {
+    console.log("where created_at", "<=", options.beforeDate)
     qb.where("created_at", "<=", options.beforeDate)
   }
 
