@@ -7,9 +7,10 @@ import {
 import { BaseContext, Nullish } from "../types"
 import { CommandOptionName } from "../constants/command"
 import { Table, TABLE_NAME } from "../constants/table"
-import { dSubtractRelative } from "../utils/date"
+import { d, dSubtractRelative } from "../utils/date"
 import { appConfig } from "../config"
 
+const AVERAGE_MS_PER_BATCH_ITEM = 637
 const LOGS_CHANNEL_ID = "546830997983854592"
 const BATCH_SIZE = 100
 const CONCURRENCY = 5
@@ -94,17 +95,24 @@ const handleRemoval = async (
     options.beforeDate = new Date()
   }
 
-  const [{ count }] = await getBaseQuery(context, options).count("message_id", {
+  let [{ count }] = await getBaseQuery(context, options).count("message_id", {
     as: "count",
   })
+  count = parseInt(`${count}`)
 
-  if (count === 0) {
+  if (Number.isNaN(count) || count === 0) {
     throw new Error("No messages found")
   }
 
   const plural = count === 1 ? "message" : "messages"
+  const estimate = d()
+    .add(AVERAGE_MS_PER_BATCH_ITEM * count, "milliseconds")
+    .fromNow(true)
   const message = await interaction.reply({
-    content: `Deleting ${count} ${plural} for <@${options.userId}>`,
+    content: [
+      `Deleting ${count} ${plural} for <@${options.userId}>`,
+      `-# Estimating ${estimate}`,
+    ].join("\n"),
     fetchReply: true,
   })
 
