@@ -65,6 +65,7 @@ const app = async () => {
     try {
       await handleInteraction(context, interaction)
     } catch (error) {
+      console.error("Command error:", error)
       await interaction.reply({
         flags: [MessageFlags.Ephemeral],
         content: (error as Error).message,
