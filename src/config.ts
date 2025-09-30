@@ -1,4 +1,3 @@
-import "dotenv/config"
 import { Knex } from "knex"
 import z from "zod"
 
