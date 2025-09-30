@@ -161,7 +161,7 @@ const getBaseQuery = (context: BaseContext, options: SelectOptions) => {
   }
 
   if (options.ignoreChannelId) {
-    qb.whereNot("channel_id", options.channelId)
+    qb.whereNot("channel_id", options.ignoreChannelId)
   }
 
   if (options.beforeDate) {
