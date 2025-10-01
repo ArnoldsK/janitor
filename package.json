@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Removes messages",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "dev": "cross-env NO_COMMANDS=true nodemon"
   },
   "keywords": [],
   "author": "ArnoldsK",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^10.1.0",
+    "nodemon": "^3.1.10",
     "typescript": "^5.9.2"
   },
   "dependencies": {

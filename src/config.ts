@@ -4,6 +4,7 @@ import z from "zod"
 const env = z
   .object({
     DEVELOPMENT: z.enum(["true", "false"]),
+    NO_COMMANDS: z.enum(["true", "false"]).default("false"),
 
     CLIENT_ID: z.string(),
     DISCORD_TOKEN: z.string(),
@@ -18,6 +19,7 @@ const env = z
 
 export const appConfig = {
   isDev: env.DEVELOPMENT === "true",
+  noCommands: env.NO_COMMANDS === "true",
 
   clientId: env.CLIENT_ID as string,
   discordToken: env.DISCORD_TOKEN as string,
