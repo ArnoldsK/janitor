@@ -10,7 +10,7 @@ import { Table, TABLE_NAME } from "../constants/table"
 import { d, dSubtractRelative } from "../utils/date"
 import { appConfig } from "../config"
 
-const AVERAGE_MS_PER_BATCH_ITEM = 637
+const AVERAGE_MS_PER_BATCH_ITEM = 1777
 const LOGS_CHANNEL_ID = "546830997983854592"
 const BATCH_SIZE = 100
 const CONCURRENCY = 5
