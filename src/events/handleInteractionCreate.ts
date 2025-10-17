@@ -7,11 +7,11 @@ import {
 
 import { commands } from "~/commands"
 import { appConfig } from "~/config"
-import { BaseContext } from "~/types"
+import { Context } from "~/types"
 import { ParsedCommandInteraction } from "~/utils/command"
 
 export const handleInteractionCreate = async (
-  context: BaseContext,
+  context: Context,
   interaction: Interaction,
 ) => {
   if (!interaction.isChatInputCommand()) return

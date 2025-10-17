@@ -5,7 +5,7 @@ export interface Cache {
   isDeletingMessages: boolean
 }
 
-export interface BaseContext {
+export interface Context {
   readonly client: Client
   readonly db: Knex
   readonly cache: Cache

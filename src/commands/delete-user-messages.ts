@@ -5,8 +5,9 @@ import {
 } from "discord.js"
 
 import { appConfig } from "~/config"
-import { Table, TABLE_NAME } from "~/constants/table"
-import { BaseContext, Nullish } from "~/types"
+import { UserMessage } from "~/modules"
+import { SelectOptions } from "~/modules/UserMessage"
+import { Context } from "~/types"
 import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"
 
@@ -21,13 +22,6 @@ enum CommandOptionName {
   Channel = "channel",
   IgnoreChannel = "ignore_channel",
   Before = "before",
-}
-
-interface SelectOptions {
-  userId: string
-  channelId: Nullish<string>
-  ignoreChannelId: Nullish<string>
-  beforeDate: Nullish<Date>
 }
 
 export default createCommand({
@@ -106,7 +100,7 @@ export default createCommand({
       throw new Error("Can't limit to a channel that is also ignored")
     }
 
-    const beforeDate = before ? dSubtractRelative(before)?.toDate() : null
+    const beforeDate = before ? dSubtractRelative(before)?.toDate() : undefined
     if (before && !beforeDate) {
       throw new Error("Invalid before date format")
     }
@@ -117,8 +111,8 @@ export default createCommand({
       await handleRemoval(context, interaction, {
         userId,
         channelId: channel?.id,
-        ignoreChannelId: ignoreChannel?.id,
-        beforeDate,
+        notChannelId: ignoreChannel?.id,
+        lteCreatedAt: beforeDate,
       })
     } finally {
       context.cache.isDeletingMessages = false
@@ -127,20 +121,16 @@ export default createCommand({
 })
 
 const handleRemoval = async (
-  context: BaseContext,
+  context: Context,
   interaction: ChatInputCommandInteraction,
-  options: SelectOptions,
+  filter: NonNullable<SelectOptions["filter"]>,
 ) => {
-  if (!options.beforeDate) {
-    options.beforeDate = new Date()
+  if (!filter.lteCreatedAt) {
+    filter.lteCreatedAt = new Date()
   }
 
-  let [{ count }] = await getBaseQuery(context, options).count("message_id", {
-    as: "count",
-  })
-  count = Number.parseInt(`${count}`)
-
-  if (Number.isNaN(count) || count === 0) {
+  const count = await UserMessage.count(context, filter)
+  if (count === 0) {
     throw new Error("No messages found")
   }
 
@@ -150,7 +140,7 @@ const handleRemoval = async (
     .fromNow(true)
   const message = await interaction.reply({
     content: [
-      `Deleting ${count} ${plural} for <@${options.userId}>`,
+      `Deleting ${count} ${plural} for <@${filter.userId}>`,
       `-# Estimating ${estimate}`,
     ].join("\n"),
     fetchReply: true,
@@ -162,23 +152,26 @@ const handleRemoval = async (
   while (true) {
     const start = Date.now()
 
-    const entries = await getBaseQuery(context, options).limit(BATCH_SIZE)
+    const entries = await UserMessage.select(context, {
+      pagination: {
+        limit: BATCH_SIZE,
+        offset: 0,
+      },
+      filter,
+    })
     if (entries.length === 0) break
 
     for (let i = 0; i < entries.length; i += CONCURRENCY) {
       const slice = entries.slice(i, i + CONCURRENCY)
 
-      await Promise.all(slice.map((entry) => deleteMessage(context, entry)))
+      await Promise.all(slice.map((entry) => deleteFromDiscord(context, entry)))
     }
 
     // Message delete event should already handle this, but just in case...
-    await context
-      .db(TABLE_NAME)
-      .whereIn(
-        "message_id",
-        entries.map((el) => el.message_id),
-      )
-      .delete()
+    await UserMessage.deleteByMessageId(
+      context,
+      entries.map((e) => e.message_id),
+    )
 
     const end = Date.now()
     totalTime += end - start
@@ -199,25 +192,10 @@ const handleRemoval = async (
   )
 }
 
-const getBaseQuery = (context: BaseContext, options: SelectOptions) => {
-  const qb = context.db<Table>(TABLE_NAME).where("user_id", options.userId)
-
-  if (options.channelId) {
-    qb.where("channel_id", options.channelId)
-  }
-
-  if (options.ignoreChannelId) {
-    qb.whereNot("channel_id", options.ignoreChannelId)
-  }
-
-  if (options.beforeDate) {
-    qb.where("created_at", "<=", options.beforeDate)
-  }
-
-  return qb
-}
-
-const deleteMessage = async (context: BaseContext, entry: Table) => {
+const deleteFromDiscord = async (
+  context: Context,
+  entry: UserMessage.db.Table,
+) => {
   try {
     const guild = context.client.guilds.cache.get(appConfig.guildId)!
     const channel =

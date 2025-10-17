@@ -6,7 +6,7 @@ import { appConfig } from "~/config"
 import { handleInteractionCreate } from "~/events/handleInteractionCreate"
 import { handleMessageCreate } from "~/events/handleMessageCreate"
 import { handleMessageDelete } from "~/events/handleMessageDelete"
-import { BaseContext } from "~/types"
+import { Context } from "~/types"
 import { removeApiCommands, setupApiCommands } from "~/utils/setup"
 
 const app = async () => {
@@ -36,7 +36,7 @@ const app = async () => {
   // #############################################################################
   // Context
   // #############################################################################
-  const context: BaseContext = {
+  const context: Context = {
     client,
     db,
     cache: {

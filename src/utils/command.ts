@@ -7,7 +7,7 @@ import {
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js"
 
-import { BaseContext } from "~/types"
+import { Context } from "~/types"
 
 export interface ParsedCommandInteraction extends ChatInputCommandInteraction {
   guild: Guild
@@ -15,7 +15,7 @@ export interface ParsedCommandInteraction extends ChatInputCommandInteraction {
 }
 
 type ExecuteFn = (
-  context: BaseContext,
+  context: Context,
   interaction: ParsedCommandInteraction,
 ) => Promise<void>
 

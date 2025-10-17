@@ -1,4 +1,4 @@
-export const TABLE_NAME = "user_messages"
+export const TableName = "user_messages"
 
 export interface Table {
   message_id: string
@@ -6,3 +6,5 @@ export interface Table {
   channel_id: string
   created_at: Date
 }
+
+export type InsertData = Table

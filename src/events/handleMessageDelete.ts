@@ -1,11 +1,11 @@
 import { Message } from "discord.js"
 
-import { Table, TABLE_NAME } from "~/constants/table"
-import { BaseContext } from "~/types"
+import { UserMessage } from "~/modules"
+import { Context } from "~/types"
 
 export const handleMessageDelete = async (
-  context: BaseContext,
+  context: Context,
   message: Pick<Message, "id">,
 ) => {
-  await context.db<Table>(TABLE_NAME).where("message_id", message.id).delete()
+  await UserMessage.deleteByMessageId(context, [message.id])
 }
