@@ -86,7 +86,9 @@ export const setupCronJobs = async (context: Context) => {
     if (cronTask.productionOnly && appConfig.isDev) return
 
     cron.schedule(cronTask.expression, async () => {
-      console.log(`Executing cron task: ${name}`)
+      if (appConfig.isDev) {
+        console.log(`Executing cron task: ${name}`)
+      }
 
       try {
         await cronTask.execute(context)
