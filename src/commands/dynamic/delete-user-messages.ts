@@ -6,7 +6,6 @@ import {
 
 import { appConfig } from "~/config"
 import { UserMessage } from "~/modules"
-import { SelectOptions } from "~/modules/userMessage"
 import { Context } from "~/types"
 import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"
@@ -126,7 +125,7 @@ export default createCommand({
 const handleRemoval = async (
   context: Context,
   interaction: ChatInputCommandInteraction,
-  filter: NonNullable<SelectOptions["filter"]>,
+  filter: NonNullable<UserMessage.SelectOptions["filter"]>,
 ) => {
   if (!filter.lteCreatedAt) {
     filter.lteCreatedAt = new Date()
