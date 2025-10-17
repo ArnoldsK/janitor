@@ -1,7 +1,9 @@
 import { AutoDelete, UserMessage } from "~/modules"
 import { CronTask } from "~/types"
+import { dedupe } from "~/utils/array"
 import { d } from "~/utils/date"
 import { deleteManyDiscordMessages } from "~/utils/message"
+import { isNonNullish } from "~/utils/types"
 
 export default {
   expression: "* * * * *", // Every minute
@@ -53,5 +55,21 @@ export default {
       context,
       messageEntitiesToRemove.map((entity) => entity.message_id),
     )
+
+    const userIds = dedupe(autoDeleteEntities.map((entity) => entity.user_id))
+    const removedUserMessageLogs = userIds
+      .map((userId) => {
+        const count = messageEntitiesToRemove.filter(
+          (entity) => entity.user_id === userId,
+        ).length
+
+        return count > 0 ? `- ${userId} (${count})` : null
+      })
+      .filter(isNonNullish)
+
+    if (removedUserMessageLogs.length > 0) {
+      console.log(`Auto-deleted messages for users:`)
+      console.log(removedUserMessageLogs.join("\n"))
+    }
   },
 } satisfies CronTask
