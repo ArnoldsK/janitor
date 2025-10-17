@@ -4,11 +4,9 @@ import { d } from "~/utils/date"
 import { deleteManyDiscordMessages } from "~/utils/message"
 
 export default {
-  // expression: "0 * * * *", // Every hour
   expression: "* * * * *", // Every minute
 
-  // productionOnly: true,
-  productionOnly: false,
+  productionOnly: true,
 
   execute: async (context) => {
     const autoDeleteEntities = await AutoDelete.all(context)
@@ -25,6 +23,12 @@ export default {
             .toDate()
 
           return await UserMessage.select(context, {
+            // Not sure if I need to limit as hourly messages shouldn't be that many, but just in case
+            // If there are more than 100 messages to delete per user, it will be handled in the next cron run
+            pagination: {
+              limit: 100,
+              offset: 0,
+            },
             filter: {
               userId: entity.user_id,
               gtCreatedAt,
