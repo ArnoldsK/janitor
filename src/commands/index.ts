@@ -10,9 +10,7 @@ import {
   makeVersionedDescription,
 } from "~/utils/command"
 
-const files = fs
-  .readdirSync(__dirname)
-  .filter((file) => file !== "index.ts" && file.endsWith(".ts"))
+const files = fs.readdirSync(path.join(__dirname, "dynamic"))
 
 export const commands = new Map<string, Command>(
   files.map((file) => {

@@ -1,6 +1,5 @@
 import { UserMessage } from "~/modules"
 import { Context } from "~/types"
-import { dedupe } from "~/utils/array"
 
 export interface SelectOptions {
   pagination?: {
@@ -69,23 +68,4 @@ export const count = async (
   })
 
   return Number(result?.count ?? 0)
-}
-
-export const insert = async (
-  context: Context,
-  data: UserMessage.db.InsertData,
-) => {
-  await context.db(UserMessage.db.TableName).insert(data).onConflict().ignore()
-}
-
-export const deleteByMessageId = async (
-  context: Context,
-  messageIds: string[],
-) => {
-  if (messageIds.length === 0) return
-
-  await context
-    .db(UserMessage.db.TableName)
-    .whereIn("message_id", dedupe(messageIds))
-    .delete()
 }
