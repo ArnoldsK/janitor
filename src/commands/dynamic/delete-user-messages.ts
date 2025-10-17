@@ -6,7 +6,7 @@ import {
 
 import { appConfig } from "~/config"
 import { UserMessage } from "~/modules"
-import { SelectOptions } from "~/modules/UserMessage"
+import { SelectOptions } from "~/modules/userMessage"
 import { Context } from "~/types"
 import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"

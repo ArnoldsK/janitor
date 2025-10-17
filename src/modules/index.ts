@@ -1,1 +1,1 @@
-export * as UserMessage from "./UserMessage"
+export * as UserMessage from "./userMessage"
