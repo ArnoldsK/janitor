@@ -3,6 +3,7 @@ import path from "node:path"
 
 import { SlashCommandBuilder } from "discord.js"
 
+import { appConfig } from "~/config"
 import {
   Command,
   CommandSetup,
@@ -17,7 +18,11 @@ export const commands = new Map<string, Command>(
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const setup = require(path.join(dir, file)).default as CommandSetup
 
-    const name = path.basename(file, ".ts")
+    let name = path.basename(file, ".ts")
+    if (appConfig.isDev) {
+      name = `dev-${name}`
+    }
+
     const data = setup
       .options(
         new SlashCommandBuilder()
