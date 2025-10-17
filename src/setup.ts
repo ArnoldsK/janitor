@@ -37,9 +37,9 @@ export const setupApiCommands = async () => {
   )
 
   if (commandsToUpdate.size > 0) {
+    console.log(`Updating ${commandsToUpdate.size} command(s):`)
     console.log(
-      `Updating ${commandsToUpdate.size} command(s):`,
-      [...commandsToUpdate.keys()].join("\n"),
+      [...commandsToUpdate.keys()].map((name) => `- ${name}`).join("\n"),
     )
 
     await rest.put(
@@ -74,9 +74,15 @@ export const removeApiCommands = async () => {
 export const setupCronJobs = async (context: Context) => {
   const cronTasks = await getCronTasks()
 
-  console.log(cronTasks)
+  const tasksToSchedule = [...cronTasks.entries()].filter(([, task]) => {
+    if (task.productionOnly && appConfig.isDev) {
+      return false
+    }
+    return true
+  })
+  if (tasksToSchedule.length === 0) return
 
-  for (const [name, cronTask] of cronTasks.entries()) {
+  for (const [name, cronTask] of tasksToSchedule) {
     if (cronTask.productionOnly && appConfig.isDev) return
 
     cron.schedule(cronTask.expression, async () => {
@@ -88,7 +94,8 @@ export const setupCronJobs = async (context: Context) => {
         console.error(`Error executing cron task ${name}:`, error)
       }
     })
-
-    console.log(`Scheduled cron task: ${name} (${cronTask.expression})`)
   }
+
+  console.log(`Scheduled ${tasksToSchedule.length} task(s):`)
+  console.log(tasksToSchedule.map(([name]) => `- ${name}`).join("\n"))
 }
