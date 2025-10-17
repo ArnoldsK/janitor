@@ -42,6 +42,7 @@ const app = async () => {
     cache: {
       isDeletingMessages: false,
     },
+    guild: () => client.guilds.cache.get(appConfig.guildId)!,
   }
 
   // #############################################################################

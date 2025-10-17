@@ -52,9 +52,7 @@ export const select = async (
   context: Context,
   options?: SelectOptions,
 ): Promise<UserMessage.db.Table[]> => {
-  const qb = getSelectQb(context, options)
-
-  return qb.select("*")
+  return await getSelectQb(context, options)
 }
 
 export const count = async (

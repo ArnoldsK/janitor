@@ -15,19 +15,18 @@ export const getCommands = async () => {
   const setups = await getCommandSetups()
   const commands = new Map<string, Command>()
 
-  for (const [name, setup] of setups.entries()) {
-    const data = setup
-      .options(
-        new SlashCommandBuilder()
-          .setName(name)
-          .setDescription(
-            makeVersionedDescription(setup.description, setup.version),
-          ),
+  for (const [setupName, setup] of setups.entries()) {
+    const name = appConfig.isDev ? `dev-${setupName}` : setupName
+
+    const builder = new SlashCommandBuilder()
+      .setName(name)
+      .setDescription(
+        makeVersionedDescription(setup.description, setup.version),
       )
-      .toJSON()
+    const data = setup.options(builder).toJSON()
 
     const command: Command = {
-      name: appConfig.isDev ? `dev-${name}` : name,
+      name,
       version: setup.version,
       permissions: setup.permissions,
       execute: setup.execute,

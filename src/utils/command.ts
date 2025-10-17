@@ -4,7 +4,9 @@ import {
   GuildMember,
   PermissionResolvable,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
+  SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
   TextBasedChannel,
 } from "discord.js"
 
@@ -25,8 +27,8 @@ export interface CommandSetup {
   version: number
   description: string
   options: (
-    builder: SlashCommandOptionsOnlyBuilder,
-  ) => SlashCommandOptionsOnlyBuilder
+    builder: SlashCommandBuilder,
+  ) => SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder
   permissions: PermissionResolvable[]
   execute: ExecuteFn
 }

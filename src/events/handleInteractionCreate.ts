@@ -1,9 +1,4 @@
-import {
-  GuildMember,
-  Interaction,
-  MessageFlags,
-  PermissionsBitField,
-} from "discord.js"
+import { GuildMember, Interaction, PermissionsBitField } from "discord.js"
 
 import { getCommands } from "~/commands"
 import { appConfig } from "~/config"
@@ -49,9 +44,8 @@ export const handleInteractionCreate = async (
       interaction as ParsedCommandInteraction,
     )
   } catch (error) {
-    console.error("Command error:", error)
     await interaction.reply({
-      flags: [MessageFlags.Ephemeral],
+      flags: "Ephemeral",
       content: (error as Error).message,
     })
   }

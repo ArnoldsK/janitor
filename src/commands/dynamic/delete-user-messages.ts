@@ -4,16 +4,15 @@ import {
   PermissionFlagsBits,
 } from "discord.js"
 
-import { appConfig } from "~/config"
 import { UserMessage } from "~/modules"
 import { Context } from "~/types"
 import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"
+import { deleteManyDiscordMessages } from "~/utils/message"
 
 const AVERAGE_MS_PER_BATCH_ITEM = 1777
 const LOGS_CHANNEL_ID = "546830997983854592"
 const BATCH_SIZE = 100
-const CONCURRENCY = 5
 
 enum CommandOptionName {
   UserId = "user_id",
@@ -28,6 +27,8 @@ export default createCommand({
 
   description:
     "Delete all messages for an user (can only be used in the logs channel)",
+
+  permissions: [PermissionFlagsBits.Administrator],
 
   options: (builder) =>
     builder
@@ -63,8 +64,6 @@ export default createCommand({
           .setDescription('Limit messages to before "1 day", "2 weeks", etc.'),
       ),
 
-  permissions: [PermissionFlagsBits.Administrator],
-
   execute: async (context, interaction) => {
     if (interaction.channel.id !== LOGS_CHANNEL_ID) {
       throw new Error(`This command can only be used in <#${LOGS_CHANNEL_ID}>`)
@@ -86,14 +85,13 @@ export default createCommand({
       CommandOptionName.UserId,
       true,
     )
+
     const filterChannel = interaction.options.getChannel(
       CommandOptionName.Channel,
     )
     const filterNotChannel = interaction.options.getChannel(
       CommandOptionName.IgnoreChannel,
     )
-    const before = interaction.options.getString(CommandOptionName.Before)
-
     if (
       filterChannel &&
       filterNotChannel &&
@@ -102,8 +100,11 @@ export default createCommand({
       throw new Error("Can't limit to a channel that is also ignored")
     }
 
-    const beforeDate = before ? dSubtractRelative(before)?.toDate() : undefined
-    if (before && !beforeDate) {
+    const filterBefore = interaction.options.getString(CommandOptionName.Before)
+    const beforeDate = filterBefore
+      ? dSubtractRelative(filterBefore)?.toDate()
+      : undefined
+    if (filterBefore && !beforeDate) {
       throw new Error("Invalid before date format")
     }
 
@@ -163,11 +164,13 @@ const handleRemoval = async (
     })
     if (entries.length === 0) break
 
-    for (let i = 0; i < entries.length; i += CONCURRENCY) {
-      const slice = entries.slice(i, i + CONCURRENCY)
-
-      await Promise.all(slice.map((entry) => deleteFromDiscord(context, entry)))
-    }
+    await deleteManyDiscordMessages(
+      context,
+      entries.map((entry) => ({
+        channelId: entry.channel_id,
+        messageId: entry.message_id,
+      })),
+    )
 
     // Message delete event should already handle this, but just in case...
     await UserMessage.deleteByMessageId(
@@ -192,24 +195,4 @@ const handleRemoval = async (
       .filter(Boolean)
       .join("\n"),
   )
-}
-
-const deleteFromDiscord = async (
-  context: Context,
-  entry: UserMessage.db.Table,
-) => {
-  try {
-    const guild = context.client.guilds.cache.get(appConfig.guildId)!
-    const channel =
-      guild.channels.cache.get(entry.channel_id) ??
-      (await guild.channels.fetch(entry.channel_id))
-
-    if (!channel?.isTextBased()) {
-      throw new Error("Channel not found")
-    }
-
-    await channel.messages.delete(entry.message_id)
-  } catch {
-    // Ignore errors
-  }
 }
