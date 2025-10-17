@@ -1,21 +1,13 @@
 import "dotenv/config"
-import {
-  APIApplicationCommand,
-  Client,
-  Events,
-  GatewayIntentBits,
-  MessageFlags,
-  REST,
-  Routes,
-} from "discord.js"
+import { Client, Events, GatewayIntentBits } from "discord.js"
 import knex from "knex"
 
-import { handleInteraction } from "./events/handleInteraction"
-import { COMMAND, COMMAND_NAME } from "./constants/command"
-import { appConfig } from "./config"
-import { BaseContext } from "./types"
-import { handleMessageCreate } from "./events/handleMessageCreate"
-import { handleMessageDelete } from "./events/handleMessageDelete"
+import { appConfig } from "~/config"
+import { handleInteractionCreate } from "~/events/handleInteractionCreate"
+import { handleMessageCreate } from "~/events/handleMessageCreate"
+import { handleMessageDelete } from "~/events/handleMessageDelete"
+import { BaseContext } from "~/types"
+import { removeApiCommands, setupApiCommands } from "~/utils/setup"
 
 const app = async () => {
   // #############################################################################
@@ -60,18 +52,7 @@ const app = async () => {
   })
 
   client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return
-    if (interaction.commandName !== COMMAND_NAME) return
-
-    try {
-      await handleInteraction(context, interaction)
-    } catch (error) {
-      console.error("Command error:", error)
-      await interaction.reply({
-        flags: [MessageFlags.Ephemeral],
-        content: (error as Error).message,
-      })
-    }
+    await handleInteractionCreate(context, interaction)
   })
 
   client.on(Events.MessageCreate, async (message) => {
@@ -83,13 +64,9 @@ const app = async () => {
   })
 
   // #############################################################################
-  // Upsert the API command
+  // API commands
   // #############################################################################
-  const rest = new REST({ version: "10" }).setToken(appConfig.discordToken)
-  const apiCommand = (await rest.post(
-    Routes.applicationGuildCommands(appConfig.clientId, appConfig.guildId),
-    { body: COMMAND.toJSON() },
-  )) as APIApplicationCommand
+  await setupApiCommands()
 
   // #############################################################################
   // Login
@@ -100,17 +77,9 @@ const app = async () => {
   // Shutdown
   // #############################################################################
   process.on("SIGINT", async () => {
-    // #############################################################################
-    // Delete the API command
-    // #############################################################################
+    // Delete API commands
     if (appConfig.isDev) {
-      await rest.delete(
-        Routes.applicationGuildCommand(
-          appConfig.clientId,
-          appConfig.guildId,
-          apiCommand.id,
-        ),
-      )
+      await removeApiCommands()
     }
 
     process.exit(2)

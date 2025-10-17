@@ -1,6 +1,7 @@
 import { Message } from "discord.js"
-import { BaseContext } from "../types"
-import { Table, TABLE_NAME } from "../constants/table"
+
+import { Table, TABLE_NAME } from "~/constants/table"
+import { BaseContext } from "~/types"
 
 export const handleMessageDelete = async (
   context: BaseContext,

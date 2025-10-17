@@ -1,6 +1,7 @@
 import { Message, MessageType } from "discord.js"
-import { BaseContext } from "../types"
-import { Table, TABLE_NAME } from "../constants/table"
+
+import { Table, TABLE_NAME } from "~/constants/table"
+import { BaseContext } from "~/types"
 
 export const handleMessageCreate = async (
   context: BaseContext,

@@ -4,23 +4,34 @@
   "description": "Removes messages",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "cross-env NO_COMMANDS=true nodemon"
+    "dev": "cross-env NO_COMMANDS=true nodemon",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "keywords": [],
   "author": "ArnoldsK",
   "license": "ISC",
-  "devDependencies": {
-    "cross-env": "^10.1.0",
-    "nodemon": "^3.1.10",
-    "typescript": "^5.9.2"
-  },
   "dependencies": {
     "dayjs": "^1.11.18",
-    "discord.js": "^14.22.1",
+    "discord.js": "^14.23.2",
     "dotenv": "^17.2.2",
     "knex": "^3.1.0",
     "mysql2": "^3.15.1",
     "ts-node": "^10.9.2",
     "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.46.1",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-unicorn": "^61.0.2",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.46.1"
   }
 }
