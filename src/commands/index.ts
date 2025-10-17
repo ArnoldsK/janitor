@@ -1,6 +1,3 @@
-import fs from "node:fs"
-import path from "node:path"
-
 import { SlashCommandBuilder } from "discord.js"
 
 import { appConfig } from "~/config"
@@ -9,20 +6,16 @@ import {
   CommandSetup,
   makeVersionedDescription,
 } from "~/utils/command"
+import { importDirectoryDefaults } from "~/utils/file"
 
-const dir = path.join(__dirname, "dynamic")
-const files = fs.readdirSync(dir)
+const getCommandSetups = () =>
+  importDirectoryDefaults<CommandSetup>(__dirname, "dynamic")
 
-export const commands = new Map<string, Command>(
-  files.map((file) => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const setup = require(path.join(dir, file)).default as CommandSetup
+export const getCommands = async () => {
+  const setups = await getCommandSetups()
+  const commands = new Map<string, Command>()
 
-    let name = path.basename(file, ".ts")
-    if (appConfig.isDev) {
-      name = `dev-${name}`
-    }
-
+  for (const [name, setup] of setups.entries()) {
     const data = setup
       .options(
         new SlashCommandBuilder()
@@ -34,13 +27,15 @@ export const commands = new Map<string, Command>(
       .toJSON()
 
     const command: Command = {
-      name,
+      name: appConfig.isDev ? `dev-${name}` : name,
       version: setup.version,
       permissions: setup.permissions,
       execute: setup.execute,
       data,
     }
 
-    return [name, command]
-  }),
-)
+    commands.set(command.name, command)
+  }
+
+  return commands
+}

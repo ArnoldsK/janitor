@@ -6,8 +6,8 @@ import { appConfig } from "~/config"
 import { handleInteractionCreate } from "~/events/handleInteractionCreate"
 import { handleMessageCreate } from "~/events/handleMessageCreate"
 import { handleMessageDelete } from "~/events/handleMessageDelete"
+import { removeApiCommands, setupApiCommands, setupCronJobs } from "~/setup"
 import { Context } from "~/types"
-import { removeApiCommands, setupApiCommands } from "~/utils/setup"
 
 const app = async () => {
   // #############################################################################
@@ -69,6 +69,11 @@ const app = async () => {
   await setupApiCommands()
 
   // #############################################################################
+  // Cron jobs
+  // #############################################################################
+  await setupCronJobs(context)
+
+  // #############################################################################
   // Login
   // #############################################################################
   await client.login(appConfig.discordToken)
@@ -77,7 +82,8 @@ const app = async () => {
   // Shutdown
   // #############################################################################
   process.on("SIGINT", async () => {
-    // Delete API commands
+    await db.destroy()
+
     if (appConfig.isDev) {
       await removeApiCommands()
     }

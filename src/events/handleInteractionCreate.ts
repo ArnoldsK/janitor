@@ -5,7 +5,7 @@ import {
   PermissionsBitField,
 } from "discord.js"
 
-import { commands } from "~/commands"
+import { getCommands } from "~/commands"
 import { appConfig } from "~/config"
 import { Context } from "~/types"
 import { ParsedCommandInteraction } from "~/utils/command"
@@ -17,6 +17,8 @@ export const handleInteractionCreate = async (
   if (!interaction.isChatInputCommand()) return
 
   try {
+    const commands = await getCommands()
+
     const command = commands.get(interaction.commandName)
     if (!command) {
       throw new Error("Unknown command")
