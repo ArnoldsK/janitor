@@ -4,7 +4,7 @@
   "description": "Removes messages",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "cross-env NO_COMMANDS=true nodemon",
+    "dev": "nodemon",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix"
   },

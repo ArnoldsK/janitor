@@ -67,12 +67,7 @@ export default createCommand({
   permissions: [PermissionFlagsBits.Administrator],
 
   execute: async (context, interaction) => {
-    const member = interaction.member
-    if (!member) {
-      throw new Error("Member not found")
-    }
-
-    if (interaction.channel?.id !== LOGS_CHANNEL_ID) {
+    if (interaction.channel.id !== LOGS_CHANNEL_ID) {
       throw new Error(`This command can only be used in <#${LOGS_CHANNEL_ID}>`)
     }
 
@@ -80,23 +75,31 @@ export default createCommand({
       throw new Error("Already deleting someone's messages")
     }
 
-    const userId = interaction.options.getString(CommandOptionName.UserId, true)
     const confirmation = interaction.options.getString(
       CommandOptionName.Confirmation,
       true,
     )
-
-    const channel = interaction.options.getChannel(CommandOptionName.Channel)
-    const ignoreChannel = interaction.options.getChannel(
-      CommandOptionName.IgnoreChannel,
-    )
-    const before = interaction.options.getString(CommandOptionName.Before)
-
     if (confirmation !== "DELETE") {
       throw new Error('You must type "DELETE" to confirm')
     }
 
-    if (channel && ignoreChannel && channel.id === ignoreChannel.id) {
+    const filterUserId = interaction.options.getString(
+      CommandOptionName.UserId,
+      true,
+    )
+    const filterChannel = interaction.options.getChannel(
+      CommandOptionName.Channel,
+    )
+    const filterNotChannel = interaction.options.getChannel(
+      CommandOptionName.IgnoreChannel,
+    )
+    const before = interaction.options.getString(CommandOptionName.Before)
+
+    if (
+      filterChannel &&
+      filterNotChannel &&
+      filterChannel.id === filterNotChannel.id
+    ) {
       throw new Error("Can't limit to a channel that is also ignored")
     }
 
@@ -109,9 +112,9 @@ export default createCommand({
       context.cache.isDeletingMessages = true
 
       await handleRemoval(context, interaction, {
-        userId,
-        channelId: channel?.id,
-        notChannelId: ignoreChannel?.id,
+        userId: filterUserId,
+        channelId: filterChannel?.id,
+        notChannelId: filterNotChannel?.id,
         lteCreatedAt: beforeDate,
       })
     } finally {

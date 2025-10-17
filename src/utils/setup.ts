@@ -20,7 +20,6 @@ export const setupApiCommands = async () => {
     string,
     RESTPostAPIChatInputApplicationCommandsJSONBody
   >(
-    // [...commands.values()]
     [...commands.values()]
       .filter((cmd) => {
         const existing = apiCommands.find((apiCmd) => apiCmd.name === cmd.name)
@@ -34,6 +33,11 @@ export const setupApiCommands = async () => {
   )
 
   if (commandsToUpdate.size > 0) {
+    console.log(
+      `Updating ${commandsToUpdate.size} command(s):`,
+      [...commandsToUpdate.keys()].join("\n"),
+    )
+
     await rest.put(
       Routes.applicationGuildCommands(appConfig.clientId, appConfig.guildId),
       {
@@ -54,6 +58,8 @@ export const setupApiCommands = async () => {
 
 export const removeApiCommands = async () => {
   const rest = new REST({ version: "10" }).setToken(appConfig.discordToken)
+
+  console.log("Removing all commands")
 
   await rest.put(
     Routes.applicationGuildCommands(appConfig.clientId, appConfig.guildId),

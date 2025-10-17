@@ -3,25 +3,21 @@ import path from "node:path"
 
 import { SlashCommandBuilder } from "discord.js"
 
-import { appConfig } from "~/config"
 import {
   Command,
   CommandSetup,
   makeVersionedDescription,
 } from "~/utils/command"
 
-const files = fs.readdirSync(path.join(__dirname, "dynamic"))
+const dir = path.join(__dirname, "dynamic")
+const files = fs.readdirSync(dir)
 
 export const commands = new Map<string, Command>(
   files.map((file) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const setup = require(path.join(__dirname, file)).default as CommandSetup
+    const setup = require(path.join(dir, file)).default as CommandSetup
 
-    let name = path.basename(file, ".ts")
-    if (appConfig.isDev) {
-      name = `dev-${name}`
-    }
-
+    const name = path.basename(file, ".ts")
     const data = setup
       .options(
         new SlashCommandBuilder()

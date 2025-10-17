@@ -5,12 +5,14 @@ import {
   PermissionResolvable,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandOptionsOnlyBuilder,
+  TextBasedChannel,
 } from "discord.js"
 
 import { Context } from "~/types"
 
 export interface ParsedCommandInteraction extends ChatInputCommandInteraction {
   guild: Guild
+  channel: TextBasedChannel
   member: GuildMember
 }
 
