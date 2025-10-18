@@ -50,7 +50,7 @@ export const setupApiCommands = async () => {
             (cmd) =>
               // Command is not removed
               commands.has(cmd.name) &&
-              // Command does not need an update
+              // Command will be updated
               !commandsToUpdate.has(cmd.name),
           ),
           ...commandsToUpdate.values(),
