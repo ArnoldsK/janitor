@@ -6,7 +6,7 @@ import { deleteManyDiscordMessages } from "~/utils/message"
 import { isNonNullish } from "~/utils/types"
 
 export default {
-  expression: "* * * * *", // Every minute
+  expression: "0 * * * *", // Every hour
 
   productionOnly: true,
 
