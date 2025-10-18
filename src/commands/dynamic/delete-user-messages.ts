@@ -10,7 +10,7 @@ import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"
 import { deleteManyDiscordMessages } from "~/utils/message"
 
-const AVERAGE_MS_PER_BATCH_ITEM = 1777
+const AVERAGE_MS_PER_BATCH_ITEM = 1777 // TODO: take example from multiple times and corelate between total msg count
 const LOGS_CHANNEL_ID = "546830997983854592"
 const BATCH_SIZE = 100
 
@@ -141,13 +141,19 @@ const handleRemoval = async (
   const estimate = d()
     .add(AVERAGE_MS_PER_BATCH_ITEM * count, "milliseconds")
     .fromNow(true)
-  const message = await interaction.reply({
+
+  const response = await interaction.reply({
     content: [
       `Deleting ${count} ${plural} for <@${filter.userId}>`,
       `-# Estimating ${estimate}`,
     ].join("\n"),
-    fetchReply: true,
+    withResponse: true,
   })
+
+  const message = response.resource?.message
+  if (!message) {
+    throw new Error("Could not get the response message")
+  }
 
   let totalTime = 0
   let batchCount = 0
