@@ -19,12 +19,12 @@ export default {
     const messageEntitiesToRemove = (
       await Promise.all(
         autoDeleteEntities.map(async (entity) => {
-          const lteCreatedAt = now
+          const newerThan = entity.created_at
+          const olderThan = now
             .subtract(entity.delete_before_hours, "hours")
             .toDate()
-          const gtCreatedAt = entity.created_at
 
-          if (lteCreatedAt <= gtCreatedAt) {
+          if (olderThan <= newerThan) {
             return []
           }
 
@@ -37,8 +37,8 @@ export default {
             },
             filter: {
               userId: entity.user_id,
-              gtCreatedAt,
-              lteCreatedAt,
+              newerThan,
+              olderThan,
             },
           })
         }),

@@ -10,8 +10,8 @@ export interface SelectOptions {
     userId?: string
     channelId?: string
     notChannelId?: string
-    gtCreatedAt?: Date
-    lteCreatedAt?: Date
+    newerThan?: Date
+    olderThan?: Date
   }
 }
 
@@ -33,12 +33,12 @@ const getSelectQb = (
     qb.whereNot("channel_id", filter.notChannelId)
   }
 
-  if (filter?.lteCreatedAt) {
-    qb.where("created_at", "<=", filter.lteCreatedAt)
+  if (filter?.newerThan) {
+    qb.where("created_at", ">", filter.newerThan)
   }
 
-  if (filter?.gtCreatedAt) {
-    qb.where("created_at", ">", filter.gtCreatedAt)
+  if (filter?.olderThan) {
+    qb.where("created_at", "<=", filter.olderThan)
   }
 
   if (pagination) {

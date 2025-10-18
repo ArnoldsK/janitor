@@ -115,7 +115,7 @@ export default createCommand({
         userId: filterUserId,
         channelId: filterChannel?.id,
         notChannelId: filterNotChannel?.id,
-        lteCreatedAt: beforeDate,
+        olderThan: beforeDate,
       })
     } finally {
       context.cache.isDeletingMessages = false
@@ -128,8 +128,8 @@ const handleRemoval = async (
   interaction: ChatInputCommandInteraction,
   filter: NonNullable<UserMessage.SelectOptions["filter"]>,
 ) => {
-  if (!filter.lteCreatedAt) {
-    filter.lteCreatedAt = new Date()
+  if (!filter.olderThan) {
+    filter.olderThan = new Date()
   }
 
   const count = await UserMessage.count(context, filter)
