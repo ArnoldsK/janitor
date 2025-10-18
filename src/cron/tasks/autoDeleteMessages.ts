@@ -19,10 +19,14 @@ export default {
     const messageEntitiesToRemove = (
       await Promise.all(
         autoDeleteEntities.map(async (entity) => {
-          const gtCreatedAt = entity.created_at
           const lteCreatedAt = now
             .subtract(entity.delete_before_hours, "hours")
             .toDate()
+          const gtCreatedAt = entity.created_at
+
+          if (lteCreatedAt <= gtCreatedAt) {
+            return []
+          }
 
           return await UserMessage.select(context, {
             // Not sure if I need to limit as hourly messages shouldn't be that many, but just in case

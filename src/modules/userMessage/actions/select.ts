@@ -33,12 +33,12 @@ const getSelectQb = (
     qb.whereNot("channel_id", filter.notChannelId)
   }
 
-  if (filter?.gtCreatedAt) {
-    qb.where("created_at", ">", filter.gtCreatedAt)
-  }
-
   if (filter?.lteCreatedAt) {
     qb.where("created_at", "<=", filter.lteCreatedAt)
+  }
+
+  if (filter?.gtCreatedAt) {
+    qb.where("created_at", ">", filter.gtCreatedAt)
   }
 
   if (pagination) {
