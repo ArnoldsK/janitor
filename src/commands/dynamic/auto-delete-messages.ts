@@ -15,7 +15,7 @@ enum CommandOptionName {
 }
 
 export default createCommand({
-  version: 2,
+  version: 3,
 
   description: "Auto-delete messages older than a specified duration",
 
@@ -31,7 +31,7 @@ export default createCommand({
             option
               .setName(CommandOptionName.Before)
               .setDescription(
-                'Auto-delete messages older than "1 day", "2 weeks", etc. Minimum is "1 hour".',
+                'Auto-delete new messages after "1 day", "2 weeks", etc. Minimum is "1 hour".',
               )
               .setRequired(true),
           ),
@@ -81,11 +81,13 @@ const handleEnable = async (
   const before = beforeInput ? dSubtractRelative(beforeInput) : undefined
 
   if (!before) {
-    throw new Error('Invalid "before" date format')
+    throw new Error(`Invalid "${CommandOptionName.Before}" date format`)
   }
 
   if (before.isAfter(d().subtract(1, "hour"))) {
-    throw new Error('The "before" duration must be at least 1 hour')
+    throw new Error(
+      `The "${CommandOptionName.Before}" duration must be at least 1 hour`,
+    )
   }
 
   const beforeHours = Math.floor(d().diff(before, "hours", true))
