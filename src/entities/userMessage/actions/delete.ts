@@ -1,4 +1,4 @@
-import { UserMessage } from "~/modules"
+import { UserMessage } from "~/entities"
 import { Context } from "~/types"
 import { dedupe } from "~/utils/array"
 

@@ -1,4 +1,4 @@
-import { AutoDelete, UserMessage } from "~/modules"
+import { AutoDelete, UserMessage } from "~/entities"
 import { CronTask } from "~/types"
 import { dedupe } from "~/utils/array"
 import { d } from "~/utils/date"

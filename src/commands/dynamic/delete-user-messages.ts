@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits,
 } from "discord.js"
 
-import { UserMessage } from "~/modules"
+import { UserMessage } from "~/entities"
 import { Context } from "~/types"
 import { createCommand } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"
@@ -15,15 +15,15 @@ const LOGS_CHANNEL_ID = "546830997983854592"
 const BATCH_SIZE = 100
 
 enum CommandOptionName {
-  UserId = "user_id",
+  UserId = "user-id",
   Confirmation = "confirmation",
   Channel = "channel",
-  IgnoreChannel = "ignore_channel",
+  IgnoreChannel = "ignore-channel",
   Before = "before",
 }
 
 export default createCommand({
-  version: 1,
+  version: 2,
 
   description:
     "Delete all messages for an user (can only be used in the logs channel)",

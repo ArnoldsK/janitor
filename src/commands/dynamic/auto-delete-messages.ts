@@ -1,4 +1,4 @@
-import { AutoDelete } from "~/modules"
+import { AutoDelete } from "~/entities"
 import { Context } from "~/types"
 import { createCommand, ParsedCommandInteraction } from "~/utils/command"
 import { d, dSubtractRelative } from "~/utils/date"

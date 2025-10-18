@@ -1,4 +1,4 @@
-import { AutoDelete } from "~/modules"
+import { AutoDelete } from "~/entities"
 import { Context } from "~/types"
 
 export const insert = async (
