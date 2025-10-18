@@ -11,7 +11,7 @@ enum SubCommandName {
 }
 
 enum CommandOptionName {
-  Age = "age",
+  Before = "older-than",
 }
 
 export default createCommand({
@@ -29,7 +29,7 @@ export default createCommand({
           .setDescription("Enable auto-deletion of old messages")
           .addStringOption((option) =>
             option
-              .setName(CommandOptionName.Age)
+              .setName(CommandOptionName.Before)
               .setDescription(
                 'Auto-delete messages older than "1 day", "2 weeks", etc. Minimum is "1 hour".',
               )
@@ -74,7 +74,10 @@ const handleEnable = async (
   context: Context,
   interaction: ParsedCommandInteraction,
 ) => {
-  const beforeInput = interaction.options.getString(CommandOptionName.Age, true)
+  const beforeInput = interaction.options.getString(
+    CommandOptionName.Before,
+    true,
+  )
   const before = beforeInput ? dSubtractRelative(beforeInput) : undefined
 
   if (!before) {
