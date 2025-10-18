@@ -30,7 +30,7 @@ export const setupApiCommands = async () => {
 
         return (
           !existing ||
-          getVersionFromDescription(existing.version) !== cmd.version
+          getVersionFromDescription(existing.description) !== cmd.version
         )
       })
       .map((cmd) => [cmd.name, cmd.data]),
