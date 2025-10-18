@@ -193,9 +193,7 @@ const handleRemoval = async (
     [
       "Deleted all messages!",
       batchCount > 0
-        ? `-# Average ms per batch item: ${Math.round(
-            totalTime / batchCount / BATCH_SIZE,
-          )}`
+        ? `-# Average ms per message: ${Math.round(totalTime / count)}`
         : null,
     ]
       .filter(Boolean)
