@@ -156,7 +156,6 @@ const handleRemoval = async (
   }
 
   let totalTime = 0
-  let batchCount = 0
 
   while (true) {
     const start = Date.now()
@@ -186,17 +185,12 @@ const handleRemoval = async (
 
     const end = Date.now()
     totalTime += end - start
-    batchCount++
   }
 
   await message.reply(
     [
       "Deleted all messages!",
-      batchCount > 0
-        ? `-# Average ms per message: ${Math.round(totalTime / count)}`
-        : null,
-    ]
-      .filter(Boolean)
-      .join("\n"),
+      `-# Average ms per message: ${Math.round(totalTime / count)}`,
+    ].join("\n"),
   )
 }
