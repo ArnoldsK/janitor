@@ -5,8 +5,8 @@ import {
   createCanvas,
   GlobalFonts,
 } from "@napi-rs/canvas"
-import d3 from "d3-hierarchy"
-import d3Chromatic from "d3-scale-chromatic"
+import * as d3 from "d3-hierarchy"
+import * as d3Chromatic from "d3-scale-chromatic"
 
 GlobalFonts.registerFromPath(
   path.join(__dirname, "fonts", "roboto.regular.ttf", "Roboto"),
