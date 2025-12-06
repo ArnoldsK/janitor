@@ -55,9 +55,7 @@ export default createCommand({
       return
     }
 
-    await interaction.deferReply({
-      flags: [MessageFlags.Ephemeral],
-    })
+    await interaction.deferReply()
 
     const channels = context.client.guilds.cache.get(interaction.guildId!)!
       .channels.cache
