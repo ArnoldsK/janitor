@@ -9,7 +9,8 @@ import * as d3 from "d3-hierarchy"
 import * as d3Chromatic from "d3-scale-chromatic"
 
 GlobalFonts.registerFromPath(
-  path.join(__dirname, "fonts", "roboto.regular.ttf", "Roboto"),
+  path.join(__dirname, "fonts", "roboto.regular.ttf"),
+  "Roboto",
 )
 
 interface D3NodeData {
