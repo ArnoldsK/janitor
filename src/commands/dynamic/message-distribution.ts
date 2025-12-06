@@ -11,7 +11,7 @@ enum CommandOptionName {
 }
 
 export default createCommand({
-  version: 1,
+  version: 2,
 
   description: "Show distribution of user messages over time",
 
