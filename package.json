@@ -12,6 +12,9 @@
   "author": "ArnoldsK",
   "license": "ISC",
   "dependencies": {
+    "@napi-rs/canvas": "^0.1.84",
+    "d3-hierarchy": "^3.1.2",
+    "d3-scale-chromatic": "^3.1.0",
     "dayjs": "^1.11.18",
     "discord.js": "^14.23.2",
     "dotenv": "^17.2.2",
@@ -22,6 +25,8 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@types/d3-hierarchy": "^3.1.7",
+    "@types/d3-scale-chromatic": "^3.1.0",
     "@types/node-cron": "^3.0.11",
     "@typescript-eslint/parser": "^8.46.1",
     "cross-env": "^10.1.0",

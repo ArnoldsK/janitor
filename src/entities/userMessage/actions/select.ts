@@ -13,14 +13,16 @@ export interface SelectOptions {
     newerThan?: Date
     olderThan?: Date
   }
+  groupBy?: (keyof UserMessage.db.Table)[]
 }
 
 const getSelectQb = (
   context: Context,
-  { pagination, filter }: SelectOptions = {},
+  { pagination, filter, groupBy }: SelectOptions = {},
 ) => {
   const qb = context.db(UserMessage.db.TableName)
 
+  // Filters
   if (filter?.userId) {
     qb.where("user_id", filter.userId)
   }
@@ -41,6 +43,12 @@ const getSelectQb = (
     qb.where("created_at", "<=", filter.olderThan)
   }
 
+  // Group by
+  if (groupBy?.length) {
+    qb.groupBy(groupBy)
+  }
+
+  // Pagination
   if (pagination) {
     qb.limit(pagination.limit).offset(pagination.offset)
   }
@@ -66,4 +74,25 @@ export const count = async (
   })
 
   return Number(result?.count ?? 0)
+}
+
+export const countByChannelId = async (
+  context: Context,
+  filter?: SelectOptions["filter"],
+): Promise<
+  Array<{
+    channel_id: string
+    count: number
+  }>
+> => {
+  const qb = getSelectQb(context, {
+    filter,
+    groupBy: ["channel_id"],
+  })
+
+  qb.select("channel_id").count("message_id", {
+    as: "count",
+  })
+
+  return await qb
 }
