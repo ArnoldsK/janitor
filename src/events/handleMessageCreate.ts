@@ -11,16 +11,14 @@ export const handleMessageCreate = async (
     return
   if (!message.channel.isTextBased()) return
 
-  const authorId =
-    message.type === MessageType.ChatInputCommand
-      ? message.interactionMetadata?.user.id
-      : message.author.id
-  if (!authorId) return
+  // Ignore interaction calls as it's not a real user message
+  // It's not found by "from:user_id" queries and would just take up space without providing value
+  if (message.type === MessageType.ChatInputCommand) return
 
   await UserMessage.insert(context, {
     message_id: message.id,
     channel_id: message.channel.id,
-    user_id: authorId,
+    user_id: message.author.id,
     created_at: message.createdAt,
   })
 }
