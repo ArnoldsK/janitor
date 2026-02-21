@@ -112,16 +112,11 @@ export default createCommand({
     const profilingResult =
       response.choices[0]?.message?.content?.trim() ?? "No profiling result."
 
-    const quotedResult = profilingResult
-      .split("\n")
-      .map((line) => `> ${line}`)
-      .join("\n")
-
     await interaction.editReply({
       content: [
-        `**Profile Analysis of** <@${user.id}> (Sample: ${entries.length} messages)`,
-        "",
-        quotedResult,
+        `**Profile Analysis of** <@${user.id}>`,
+        `-# Sample: ${entries.length} messages`,
+        profilingResult,
       ].join("\n"),
     })
   },
