@@ -98,7 +98,7 @@ export default createCommand({
       ),
     )
 
-    const messageLog = messages
+    const messageLogs = messages
       .filter(isNonNullish)
       .filter(
         (message) =>
@@ -110,9 +110,8 @@ export default createCommand({
         (message) =>
           `${message.createdTimestamp / 1000}: "${message.cleanContent}"`,
       )
-      .join("\n")
 
-    if (messageLog.length === 0) {
+    if (messageLogs.length === 0) {
       await interaction.editReply({
         content: "No messages with content found for this user",
       })
@@ -128,7 +127,7 @@ export default createCommand({
         },
         {
           role: "user",
-          content: messageLog,
+          content: messageLogs.join("\n"),
         },
       ],
       temperature: 0.7,
@@ -141,7 +140,7 @@ export default createCommand({
     await interaction.editReply({
       content: [
         `**Profile Analysis of** <@${user.id}>`,
-        `-# Sample: ${entries.length} messages`,
+        `-# Sample: ${messageLogs.length} messages`,
         profilingResult,
       ].join("\n"),
     })
@@ -152,7 +151,7 @@ export default createCommand({
       `User: ${user.tag} (${user.id})`,
       `Profiling Result: ${profilingResult}`,
       "",
-      messageLog,
+      messageLogs.join("\n"),
       "",
     ].join("\n")
 
