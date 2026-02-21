@@ -13,6 +13,8 @@ const env = z
     DB_USERNAME: z.string(),
     DB_PASSWORD: z.string(),
     DB_DATABASE: z.string(),
+
+    OPEN_AI_API_KEY: z.string(),
   })
   .parse(process.env)
 
@@ -30,4 +32,8 @@ export const appConfig = {
     password: env.DB_PASSWORD,
     database: env.DB_DATABASE,
   } satisfies Knex.MySql2ConnectionConfig,
+
+  openAI: {
+    apiKey: env.OPEN_AI_API_KEY,
+  },
 }

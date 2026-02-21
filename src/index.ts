@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { Client, Events, GatewayIntentBits } from "discord.js"
 import knex from "knex"
+import OpenAI from "openai"
 
 import { appConfig } from "~/config"
 import { handleInteractionCreate } from "~/events/handleInteractionCreate"
@@ -34,6 +35,15 @@ const app = async () => {
   })
 
   // #############################################################################
+  // AI client
+  // #############################################################################
+  const ai = appConfig.openAI.apiKey
+    ? new OpenAI({
+        apiKey: appConfig.openAI.apiKey,
+      })
+    : null
+
+  // #############################################################################
   // Context
   // #############################################################################
   const context: Context = {
@@ -43,6 +53,7 @@ const app = async () => {
       isDeletingMessages: false,
     },
     guild: () => client.guilds.cache.get(appConfig.guildId)!,
+    ai,
   }
 
   // #############################################################################

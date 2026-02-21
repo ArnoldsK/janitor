@@ -1,15 +1,41 @@
+import { Message } from "discord.js"
+
 import { Context } from "~/types"
 
 const DELETE_MANY_CONCURRENCY = 5
 
-interface DeleteDiscordMessageItem {
+interface DiscordMessageItem {
   channelId: string
   messageId: string
 }
 
+export const getOrFetchMessage = async (
+  context: Context,
+  item: DiscordMessageItem,
+): Promise<Message | null> => {
+  const guild = context.guild()
+  const channel =
+    guild.channels.cache.get(item.channelId) ??
+    (await guild.channels.fetch(item.channelId))
+
+  if (!channel?.isTextBased()) {
+    throw new Error("Channel not found")
+  }
+
+  try {
+    const message =
+      channel.messages.cache.get(item.messageId) ??
+      (await channel.messages.fetch(item.messageId))
+
+    return message
+  } catch {
+    return null
+  }
+}
+
 export const deleteDiscordMessage = async (
   context: Context,
-  { channelId, messageId }: DeleteDiscordMessageItem,
+  { channelId, messageId }: DiscordMessageItem,
 ) => {
   try {
     const guild = context.guild()
@@ -29,7 +55,7 @@ export const deleteDiscordMessage = async (
 
 export const deleteManyDiscordMessages = async (
   context: Context,
-  items: DeleteDiscordMessageItem[],
+  items: DiscordMessageItem[],
 ) => {
   if (items.length === 0) return
 

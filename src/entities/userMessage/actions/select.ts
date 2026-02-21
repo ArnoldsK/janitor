@@ -53,6 +53,9 @@ const getSelectQb = (
     qb.limit(pagination.limit).offset(pagination.offset)
   }
 
+  // Newest first
+  qb.orderBy("created_at", "desc")
+
   return qb
 }
 
