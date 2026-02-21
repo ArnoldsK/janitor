@@ -57,7 +57,8 @@ export default createCommand({
       },
       pagination: {
         limit: PROFILE_MESSAGE_LIMIT,
-        offset: 0,
+        // Offset to skip messages that might be asking about this command invocation
+        offset: 3,
       },
     })
 
