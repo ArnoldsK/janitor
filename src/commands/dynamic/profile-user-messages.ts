@@ -120,7 +120,7 @@ export default createCommand({
 
     await interaction.editReply({
       content: [
-        `📊 **Profile Analysis of** <@${user.id}> (Sample: ${entries.length}/${PROFILE_MESSAGE_LIMIT} messages)`,
+        `**Profile Analysis of** <@${user.id}> (Sample: ${entries.length} messages)`,
         quotedResult,
       ].join("\n"),
     })
