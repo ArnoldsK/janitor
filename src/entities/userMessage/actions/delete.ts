@@ -13,3 +13,15 @@ export const deleteByMessageId = async (
     .whereIn("message_id", dedupe(messageIds))
     .delete()
 }
+
+export const deleteByChannelId = async (
+  context: Context,
+  channelIds: string[],
+) => {
+  if (channelIds.length === 0) return
+
+  await context
+    .db(UserMessage.db.TableName)
+    .whereIn("channel_id", dedupe(channelIds))
+    .delete()
+}

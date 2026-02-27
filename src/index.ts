@@ -4,6 +4,7 @@ import knex from "knex"
 import OpenAI from "openai"
 
 import { appConfig } from "~/config"
+import { handleChannelDelete } from "~/events/handleChannelDelete"
 import { handleInteractionCreate } from "~/events/handleInteractionCreate"
 import { handleMessageCreate } from "~/events/handleMessageCreate"
 import { handleMessageDelete } from "~/events/handleMessageDelete"
@@ -73,6 +74,10 @@ const app = async () => {
 
   client.on(Events.MessageDelete, async (message) => {
     await handleMessageDelete(context, message)
+  })
+
+  client.on(Events.ChannelDelete, async (channel) => {
+    await handleChannelDelete(context, channel)
   })
 
   // #############################################################################
